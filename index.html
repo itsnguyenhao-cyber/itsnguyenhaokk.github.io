@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧋 Tiệm Trà Sữa - Bản Đầy Đủ & Mini-game</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #ffe6f2, #fff4d6);
+    color: #432b35;
+}
+
+header {
+    background: #ff75a8;
+    color: white;
+    text-align: center;
+    padding: 18px;
+    box-shadow: 0 3px 10px #999;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 12px;
+}
+
+.stat {
+    background: white;
+    padding: 10px 15px;
+    border-radius: 15px;
+    box-shadow: 0 2px 7px #ccc;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 15px;
+}
+
+h2 {
+    color: #e83e78;
+    border-bottom: 2px dashed #ffb6c1;
+    padding-bottom: 5px;
+}
+
+.shop, .inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 4px 12px #ddd;
+    transition: .2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.food {
+    font-size: 45px;
+}
+
+.card h3 {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.price {
+    color: #e83e78;
+    font-weight: bold;
+    margin: 8px;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: #ff5f9e;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 4px;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #e83e78;
+}
+
+button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.section-box {
+    background: #fff;
+    padding: 18px;
+    margin-top: 20px;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px #ddd;
+}
+
+.log {
+    margin-top: 20px;
+    background: #30232a;
+    color: #fff;
+    border-radius: 15px;
+    padding: 15px;
+    height: 160px;
+    overflow-y: auto;
+}
+
+.log p {
+    margin: 5px 0;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #7a5c68;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🧋 TIỆM TRÀ SỮA NHỎ 🧋</h1>
+    <p>Kho • Pha chế • Nâng cấp • Mini-game</p>
+</header>
+
+<div class="stats">
+    <div class="stat">💰 Tiền: <span id="money">100.000</span>đ</div>
+    <div class="stat">👥 Khách: <span id="customers">0</span></div>
+    <div class="stat">⭐ Danh tiếng: <span id="fame">1</span></div>
+    <div class="stat">🏪 Cấp quán: <span id="level">1</span></div>
+</div>
+
+<div class="container">
+
+<!-- KHO NGUYÊN LIỆU -->
+<h2>📦 Kho Nguyên Liệu</h2>
+<div class="inventory-grid">
+    <div class="card">
+        <div class="food">🧊</div>
+        <h3>Trà & Sữa</h3>
+        <div class="price">Kho: <span id="stockTea">10</span> phần</div>
+        <button onclick="buyStock('tea', 15000, 5)">Nhập 5 phần (15.000đ)</button>
+    </div>
+    <div class="card">
+        <div class="food">🧆</div>
+        <h3>Trân Châu & Topping</h3>
+        <div class="price">Kho: <span id="stockTopping">10</span> phần</div>
+        <button onclick="buyStock('topping', 10000, 5)">Nhập 5 phần (10.000đ)</button>
+    </div>
+    <div class="card">
+        <div class="food">🍟</div>
+        <h3>Đồ Ăn Vặt</h3>
+        <div class="price">Kho: <span id="stockSnack">10</span> phần</div>
+        <button onclick="buyStock('snack', 12000, 5)">Nhập 5 phần (12.000đ)</button>
+    </div>
+</div>
+
+<!-- MENU BÁN HÀNG -->
+<h2>🛍️ Menu Phục Vụ</h2>
+<div class="shop">
+    <div class="card">
+        <div class="food">🧋</div>
+        <h3>Trà sữa truyền thống</h3>
+        <div class="price">25.000đ</div>
+        <button onclick="sell('Trà sữa truyền thống', 25000, 'tea', 1)">Bán</button>
+    </div>
+
+    <div class="card">
+        <div class="food">🍓</div>
+        <h3>Trà sữa dâu</h3>
+        <div class="price">30.000đ</div>
+        <button onclick="sell('Trà sữa dâu', 30000, 'tea', 1)">Bán</button>
+    </div>
+
+    <div class="card">
+        <div class="food">🧋</div>
+        <h3>Trà sữa trân châu</h3>
+        <div class="price">35.000đ</div>
+        <button onclick="sell('Trà sữa trân châu', 35000, 'topping', 1)">Bán</button>
+    </div>
+
+    <div class="card">
+        <div class="food">🍟</div>
+        <h3>Khoai tây chiên</h3>
+        <div class="price">20.000đ</div>
+        <button onclick="sell('Khoai tây chiên', 20000, 'snack', 1)">Bán</button>
+    </div>
+
+    <div class="card">
+        <div class="food">🌭</div>
+        <h3>Xúc xích</h3>
+        <div class="price">15.000đ</div>
+        <button onclick="sell('Xúc xích', 15000, 'snack', 1)">Bán</button>
+    </div>
+
+    <div class="card">
+        <div class="food">🍡</div>
+        <h3>Cá viên chiên</h3>
+        <div class="price">25.000đ</div>
+        <button onclick="sell('Cá viên chiên', 25000, 'snack', 1)">Bán</button>
+    </div>
+</div>
+
+<!-- MINI-GAME QUAY THƯỞNG -->
+<div class="section-box" style="text-align: center; background: #fff0f6;">
+    <h2>🎡 Mini-game: Vòng Quay May Mắn</h2>
+    <p>Thử vận may mỗi ngày để nhận quà khủng cho quán!</p>
+    <button onclick="spinWheel()" style="background: #ff3385; font-size: 16px; padding: 12px 24px;">🎯 Quay Ngay (Miễn phí)</button>
+</div>
+
+<!-- NÂNG CẤP VÀ QUẢN LÝ -->
+<div class="section-box">
+    <h2>⬆️ Quản Lý & Nâng Cấp</h2>
+    <p>🏪 Cấp quán hiện tại: <b id="level2">1</b></p>
+    <p>👨‍🍳 Nhân viên pha chế tự động: <b id="staffCount">0</b></p>
+    
+    <button onclick="upgradeShop()">⬆️ Nâng cấp quán - <span id="upgradePrice">100.000</span>đ</button>
+    <button onclick="hireStaff()">👩‍🍳 Thuê nhân viên - <span id="staffPrice">75.000</span>đ</button>
+    <button onclick="advertise()">📢 Quảng cáo - 50.000đ</button>
+    <button onclick="saveGame()">💾 Lưu game</button>
+    <button onclick="resetGame()">🔄 Chơi lại</button>
+</div>
+
+<h2>📜 Nhật ký cửa hàng</h2>
+<div class="log" id="log">
+    <p>🎉 Chào mừng bạn đến với phiên bản có Mini-game Vòng Quay!</p>
+</div>
+
+</div>
+
+<footer>
+    🧋 Tiệm Trà Sữa Nhỏ - Tích hợp Mini-game
+</footer>
+
+<script>
+let money = 100000;
+let customers = 0;
+let fame = 1;
+let level = 1;
+let upgradePrice = 100000;
+
+let stock = {
+    tea: 10,
+    topping: 10,
+    snack: 10
+};
+
+let staffCount = 0;
+let staffPrice = 75000;
+
+function updateUI() {
+    document.getElementById("money").innerText = money.toLocaleString("vi-VN");
+    document.getElementById("customers").innerText = customers;
+    document.getElementById("fame").innerText = fame;
+    document.getElementById("level").innerText = level;
+    document.getElementById("level2").innerText = level;
+    document.getElementById("upgradePrice").innerText = upgradePrice.toLocaleString("vi-VN");
+    
+    document.getElementById("stockTea").innerText = stock.tea;
+    document.getElementById("stockTopping").innerText = stock.topping;
+    document.getElementById("stockSnack").innerText = stock.snack;
+    
+    document.getElementById("staffCount").innerText = staffCount;
+    document.getElementById("staffPrice").innerText = staffPrice.toLocaleString("vi-VN");
+}
+
+/* =========================
+   NHẬP NGUYÊN LIỆU
+========================= */
+function buyStock(type, cost, amount) {
+    if (money < cost) {
+        addLog("❌ Không đủ tiền để nhập nguyên liệu này!");
+        return;
+    }
+    money -= cost;
+    stock[type] += amount;
+    addLog("📦 Đã nhập thêm " + amount + " phần nguyên liệu (" + type + ").");
+    updateUI();
+    saveGame();
+}
+
+/* =========================
+   BÁN HÀNG
+========================= */
+function sell(name, price, requiredType, amountNeeded) {
+    if (stock[requiredType] < amountNeeded) {
+        addLog("❌ Hết nguyên liệu! Hãy nhập thêm nguyên liệu ở kho.");
+        return;
+    }
+
+    stock[requiredType] -= amountNeeded;
+
+    let bonus = 1 + (level - 1) * 0.1;
+    let income = Math.floor(price * bonus);
+
+    money += income;
+    customers++;
+
+    if (Math.random() < 0.15) {
+        fame++;
+    }
+
+    addLog("🛍️ Bán " + name + " +" + income.toLocaleString("vi-VN") + "đ");
+    updateUI();
+    saveGame();
+}
+
+/* =========================
+   MINI-GAME VÒNG QUAY MAY MẮN
+========================= */
+function spinWheel() {
+    let rewards = [
+        { type: "money", value: 50000, text: "🎉 Trúng thưởng lớn: +50.000đ!" },
+        { type: "money", value: 20000, text: "🎁 Trúng thưởng nhỏ: +20.000đ!" },
+        { type: "stock", text: "📦 Nhận ngay 5 phần Trà & Sữa miễn phí!" },
+        { type: "fame", value: 3, text: "⭐ Danh tiếng tăng vọt: +3 Sao!" },
+        { type: "bad", text: "😅 Hơi đen đủi: Không trúng gì cả, chúc bạn may mắn lần sau!" }
+    ];
+
+    let picked = rewards[Math.floor(Math.random() * rewards.length)];
+
+    if (picked.type === "money") {
+        money += picked.value;
+    } else if (picked.type === "stock") {
+        stock.tea += 5;
+    } else if (picked.type === "fame") {
+        fame += picked.value;
+    }
+
+    addLog("🎡 [Vòng quay] " + picked.text);
+    updateUI();
+    saveGame();
+}
+
+/* =========================
+   NÂNG CẤP & NHÂN VIÊN
+========================= */
+function upgradeShop() {
+    if (money < upgradePrice) {
+        addLog("❌ Không đủ tiền để nâng cấp quán!");
+        return;
+    }
+    money -= upgradePrice;
+    level++;
+    fame += 2;
+    upgradePrice = Math.floor(upgradePrice * 1.6);
+    addLog("🎉 Quán đã lên cấp " + level + "!");
+    updateUI();
+    saveGame();
+}
+
+function hireStaff() {
+    if (money < staffPrice) {
+        addLog("❌ Không đủ tiền thuê nhân viên!");
+        return;
+    }
+    money -= staffPrice;
+    staffCount++;
+    staffPrice = Math.floor(staffPrice * 1.5);
+    addLog("👩‍🍳 Đã tuyển thành công nhân viên pha chế số " + staffCount + "!");
+    updateUI();
+    saveGame();
+}
+
+function advertise() {
+    let price = 50000;
+    if (money < price) {
+        addLog("❌ Không đủ tiền quảng cáo!");
+        return;
+    }
+    money -= price;
+    fame += 5;
+    let newCustomers = Math.floor(Math.random() * 10) + 5;
+    customers += newCustomers;
+    addLog("📢 Quảng cáo thành công! +" + newCustomers + " khách tiềm năng.");
+    updateUI();
+    saveGame();
+}
+
+/* =========================
+   NHẬT KÝ & LƯU GAME
+========================= */
+function addLog(text) {
+    let log = document.getElementById("log");
+    let p = document.createElement("p");
+    let time = new Date().toLocaleTimeString();
+    p.innerText = "[" + time + "] " + text;
+    log.prepend(p);
+}
+
+function saveGame() {
+    let data = {
+        money, customers, fame, level, upgradePrice, stock, staffCount, staffPrice
+    };
+    localStorage.setItem("milkTeaGameWheel", JSON.stringify(data));
+}
+
+function loadGame() {
+    let data = localStorage.getItem("milkTeaGameWheel");
+    if (!data) {
+        updateUI();
+        return;
+    }
+    data = JSON.parse(data);
+    money = data.money ?? 100000;
+    customers = data.customers ?? 0;
+    fame = data.fame ?? 1;
+    level = data.level ?? 1;
+    upgradePrice = data.upgradePrice ?? 100000;
+    stock = data.stock ?? { tea: 10, topping: 10, snack: 10 };
+    staffCount = data.staffCount ?? 0;
+    staffPrice = data.staffPrice ?? 75000;
+    updateUI();
+    addLog("💾 Đã tải dữ liệu cửa hàng thành công.");
+}
+
+function resetGame() {
+    let confirmReset = confirm("Bạn có chắc muốn xóa toàn bộ tiến trình?");
+    if (!confirmReset) return;
+    localStorage.removeItem("milkTeaGameWheel");
+    money = 100000;
+    customers = 0;
+    fame = 1;
+    level = 1;
+    upgradePrice = 100000;
+    stock = { tea: 10, topping: 10, snack: 10 };
+    staffCount = 0;
+    staffPrice = 75000;
+    document.getElementById("log").innerHTML = "<p>🔄 Đã bắt đầu lại cửa hàng!</p>";
+    updateUI();
+}
+
+/* =========================
+   VÒNG LẶP TỰ ĐỘNG
+========================= */
+setInterval(function() {
+    let chance = 0.15 + fame * 0.01;
+    if (Math.random() < chance) {
+        customers++;
+        let bonusMoney = Math.floor((Math.random() * 10000) + 5000);
+        money += bonusMoney;
+        addLog("👤 Một khách mới ghé quán! +" + bonusMoney.toLocaleString("vi-VN") + "đ");
+        updateUI();
+        saveGame();
+    }
+
+    if (staffCount > 0) {
+        let totalTeaNeeded = staffCount;
+        if (stock.tea >= totalTeaNeeded) {
+            stock.tea -= totalTeaNeeded;
+            let staffIncome = staffCount * 12000;
+            money += staffIncome;
+            addLog("👩‍🍳 Nhân viên đã tự động pha chế hộ bạn +" + staffIncome.toLocaleString("vi-VN") + "đ");
+            updateUI();
+            saveGame();
+        } else {
+            addLog("⚠️ Nhân viên tạm nghỉ do hết nguyên liệu Trà & Sữa trong kho!");
+        }
+    }
+}, 6000);
+
+loadGame();
+</script>
+
+</body>
+</html>
